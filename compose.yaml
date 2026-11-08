@@ -6,6 +6,15 @@ services:
       - data:/srv/data
     restart: unless-stopped
 
+  worker:
+    build: .
+    command: ["python", "-m", "app.worker"]
+    init: true
+    env_file: .env
+    volumes:
+      - data:/srv/data
+    restart: unless-stopped
+
   caddy:
     image: caddy:2
     ports:
