@@ -92,17 +92,22 @@ def collect(conn):
             if max(_parse(r["published_at"]) for r in rows) < stop_before:
                 reached_old = True
                 break
+            owner_replied = int(any(r["author_channel"] == channel_id for r in rows[1:]))
             for r in rows:
                 if r["author_channel"] == channel_id:   # skip the channel owner
                     continue
                 if _parse(r["published_at"]) < oldest_allowed:
                     continue
+                r["owner_replied"] = owner_replied if r is top else 0
                 cur = conn.execute(
-                    "INSERT OR IGNORE INTO comments(id, video_id, parent_id, author, text, published_at) "
-                    "VALUES(:id, :video_id, :parent_id, :author, :text, :published_at)",
+                    "INSERT OR IGNORE INTO comments"
+                    "(id, video_id, parent_id, author, text, published_at, owner_replied) "
+                    "VALUES(:id, :video_id, :parent_id, :author, :text, :published_at, :owner_replied)",
                     r,
                 )
                 new += cur.rowcount
+                if r is top and owner_replied:
+                    conn.execute("UPDATE comments SET owner_replied = 1 WHERE id = ?", (r["id"],))
                 if newest is None or r["published_at"] > newest:
                     newest = r["published_at"]
 

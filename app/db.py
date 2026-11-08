@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS comments (
     author       TEXT,                      -- NULL after 30 days
     text         TEXT,                      -- NULL after 30 days
     published_at TEXT NOT NULL,             -- ISO 8601, UTC
+    owner_replied INTEGER NOT NULL DEFAULT 0, -- channel owner already answered in the thread
     analyzed     INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_comments_published ON comments(published_at);
@@ -61,6 +62,8 @@ CREATE TABLE IF NOT EXISTS runs (
     fetched     INTEGER NOT NULL DEFAULT 0,
     quota_units INTEGER NOT NULL DEFAULT 0,
     purged      INTEGER NOT NULL DEFAULT 0,
+    analyzed    INTEGER NOT NULL DEFAULT 0,
+    new_topics  INTEGER NOT NULL DEFAULT 0,
     status      TEXT NOT NULL DEFAULT 'running',  -- running | ok | error
     message     TEXT NOT NULL DEFAULT ''
 );
