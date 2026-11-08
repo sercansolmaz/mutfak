@@ -315,6 +315,12 @@ def favicon():
     return redirect(url_for("static", filename="favicon.svg"), 301)
 
 
+@app.get("/apple-touch-icon.png")
+@app.get("/apple-touch-icon-precomposed.png")
+def apple_touch_icon():
+    return redirect(url_for("static", filename="apple-touch-icon.png"), 301)
+
+
 @app.get("/healthz")
 def healthz():
     with db.connect() as conn:
