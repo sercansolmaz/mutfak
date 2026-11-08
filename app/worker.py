@@ -2,15 +2,17 @@
 
     python -m app.worker        # wait for RUN_AT every night (default 03:00)
     python -m app.worker once   # run the nightly job right now
+    python -m app.worker report # send the Telegram report right now
 """
 import fcntl
 import os
 import sys
+import threading
 import time
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from app import analyzer, collector, db
+from app import analyzer, collector, db, telegram
 
 TZ = ZoneInfo("Europe/Istanbul")
 
@@ -65,19 +67,20 @@ def _nightly():
     log(f"run {run_id}: {status} " + " ".join(f"{k}={v}" for k, v in r.items()) + f" {message}")
 
 
-def todays_run_time(now):
-    hour, minute = map(int, os.environ.get("RUN_AT", "03:00").split(":"))
+def at_today(now, var, default):
+    """Today's time for a "HH:MM" setting from .env, e.g. RUN_AT=03:00."""
+    hour, minute = map(int, os.environ.get(var, default).split(":"))
     return now.replace(hour=hour, minute=minute, second=0, microsecond=0)
 
 
-def next_run_after(now):
-    target = todays_run_time(now)
+def next_after(now, var, default):
+    target = at_today(now, var, default)
     return target if target > now else target + timedelta(days=1)
 
 
 def missed_today(now):
     """True if today's run time has passed but no run happened today (e.g. after a reboot)."""
-    if now < todays_run_time(now):
+    if now < at_today(now, "RUN_AT", "03:00"):
         return False
     with db.connect() as conn:
         row = conn.execute("SELECT MAX(started_at) AS t FROM runs WHERE status = 'ok'").fetchone()
@@ -87,20 +90,41 @@ def missed_today(now):
     return last.astimezone(TZ).date() < now.date()
 
 
+def report():
+    try:
+        telegram.send_report()
+        log("telegram report sent")
+    except Exception as exc:
+        log(f"telegram report failed: {exc}")
+
+
 def main():
     db.init()
     if len(sys.argv) > 1 and sys.argv[1] == "once":
         nightly()
         return
+    if len(sys.argv) > 1 and sys.argv[1] == "report":
+        report()
+        return
+
+    jobs = [("RUN_AT", "03:00", nightly)]
+    if telegram.enabled():
+        jobs.append(("REPORT_AT", "09:00", report))
+        threading.Thread(target=telegram.poll_forever, args=(log,), daemon=True).start()
+        log("telegram bot is on")
+    else:
+        log("telegram bot is off (TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is empty)")
+
     if missed_today(datetime.now(TZ)):
         log("today's run was missed, running now")
         nightly()
     while True:
-        target = next_run_after(datetime.now(TZ))
-        log(f"next run at {target:%Y-%m-%d %H:%M}")
+        now = datetime.now(TZ)
+        target, job = min((next_after(now, var, default), fn) for var, default, fn in jobs)
+        log(f"next: {job.__name__} at {target:%Y-%m-%d %H:%M}")
         while (remaining := (target - datetime.now(TZ)).total_seconds()) > 0:
             time.sleep(min(remaining, 60))
-        nightly()
+        job()
 
 
 if __name__ == "__main__":
