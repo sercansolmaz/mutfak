@@ -310,6 +310,11 @@ def question_done(comment_id):
     return redirect(url_for("questions"))
 
 
+@app.get("/favicon.ico")
+def favicon():
+    return redirect(url_for("static", filename="favicon.svg"), 301)
+
+
 @app.get("/healthz")
 def healthz():
     with db.connect() as conn:
