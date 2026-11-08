@@ -15,9 +15,30 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app import db
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "")
-if len(SECRET_KEY) < 32:
-    raise RuntimeError("SECRET_KEY must be set in .env (at least 32 characters)")
+def _secret_key():
+    """SECRET_KEY from the environment, or one generated once and kept on the data volume."""
+    key = os.environ.get("SECRET_KEY", "").strip()
+    if key:
+        if len(key) < 32:
+            raise RuntimeError("SECRET_KEY must be at least 32 characters (or leave it empty)")
+        return key
+    path = os.path.join(os.path.dirname(db.DB_PATH), "secret_key")
+    try:
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w") as f:
+            f.write(secrets.token_hex(32))
+    except FileExistsError:
+        pass   # another gunicorn worker created it first
+    for _ in range(50):
+        with open(path) as f:
+            key = f.read().strip()
+        if key:
+            return key
+        time.sleep(0.1)
+    raise RuntimeError("could not read " + path)
+
+
+SECRET_KEY = _secret_key()
 PANEL_PASSWORD = os.environ.get("PANEL_PASSWORD", "")
 CHANNEL_ID = os.environ.get("YOUTUBE_CHANNEL_ID", "")
 

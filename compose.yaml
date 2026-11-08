@@ -1,19 +1,29 @@
+x-app: &app
+  build: .
+  environment:
+    DOMAIN: ${DOMAIN:?DOMAIN must be set}
+    PANEL_PASSWORD: ${PANEL_PASSWORD:-}
+    SECRET_KEY: ${SECRET_KEY:-}
+    YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-}
+    YOUTUBE_CHANNEL_ID: ${YOUTUBE_CHANNEL_ID:-}
+    OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+    OPENROUTER_MODEL: ${OPENROUTER_MODEL:-deepseek/deepseek-v4.1-flash}
+    TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+    TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+    RUN_AT: ${RUN_AT:-03:00}
+    REPORT_AT: ${REPORT_AT:-09:00}
+  volumes:
+    - data:/srv/data
+  restart: unless-stopped
+
 services:
   web:
-    build: .
-    env_file: .env
-    volumes:
-      - data:/srv/data
-    restart: unless-stopped
+    <<: *app
 
   worker:
-    build: .
+    <<: *app
     command: ["python", "-m", "app.worker"]
     init: true
-    env_file: .env
-    volumes:
-      - data:/srv/data
-    restart: unless-stopped
 
   caddy:
     image: caddy:2
@@ -22,7 +32,7 @@ services:
       - "443:443"
       - "443:443/udp"
     environment:
-      DOMAIN: ${DOMAIN:?DOMAIN must be set in .env}
+      DOMAIN: ${DOMAIN:?DOMAIN must be set}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

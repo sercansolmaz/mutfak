@@ -60,8 +60,8 @@ YouTube API ──> toplayıcı ──> SQLite <── analiz ──> OpenRouter
 
 ## Kurulum
 
-Docker ve Docker Compose kurulu bir Linux sunucu, bir alan adı (ya da alt alan adı) ve şu anahtarlar
-gerekir:
+80 ve 443 portları boş bir Linux sunucu, ona yönlendirilmiş bir alan adı (ya da alt alan adı) ve üç
+değer gerekir: YouTube API anahtarı, kanal kimliğiniz ve OpenRouter API anahtarı.
 
 | Anahtar | Nereden alınır? |
 |---|---|
@@ -70,15 +70,23 @@ gerekir:
 | `OPENROUTER_API_KEY` | https://openrouter.ai/keys |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | İsteğe bağlı. Botu @BotFather ile oluşturun, chat ID'nizi @userinfobot'tan öğrenin. |
 
-```sh
-git clone <bu depo> mutfak && cd mutfak
-cp .env.example .env && chmod 600 .env
-# .env dosyasını doldurun (her değer dosyada açıklanmıştır), sonra:
-docker compose up -d --build
-```
+1. Alan adınız için sunucunun IP adresini gösteren bir A kaydı ekleyin.
+2. Docker kurulu değilse kurun (Ubuntu/Debian):
+   ```sh
+   apt install -y docker.io docker-compose-v2
+   ```
+3. Kodu indirin ve ayarları doldurun (her değer dosyada açıklanmıştır):
+   ```sh
+   git clone https://github.com/erhanmeydan/mutfak.git && cd mutfak
+   cp .env.example .env && chmod 600 .env && nano .env
+   ```
+4. Başlatın:
+   ```sh
+   docker compose up -d --build
+   ```
 
-Önce alan adınız için sunucunun IP adresini gösteren bir A kaydı ekleyin. Caddy HTTPS sertifikasını
-kendisi alır. Tüm servisler kendiliğinden yeniden başlar; sunucu yeniden açıldığında da.
+Pano `https://alan-adiniz/mutfak`, panel `https://alan-adiniz/panel` adresindedir. Caddy HTTPS
+sertifikasını kendisi alır. Tüm servisler kendiliğinden yeniden başlar; sunucu yeniden açıldığında da.
 
 İlk çalışmada son 30 günün yorumları çekilir. Sonraki gecelerde yalnızca yeni yorumlar gelir.
 
@@ -96,7 +104,7 @@ docker compose logs -f worker                            # gece işini izle
 |---|---|---|
 | `DOMAIN` | | Pano ve panelin alan adı |
 | `PANEL_PASSWORD` | | `/panel` giriş şifresi |
-| `SECRET_KEY` | | Çerezler ve IP özetleri için uzun rastgele değer |
+| `SECRET_KEY` | üretilir | Çerezler ve IP özetleri için gizli değer. Boş bırakılırsa uygulama üretir ve veri volume'ünde saklar |
 | `OPENROUTER_MODEL` | `deepseek/deepseek-v4.1-flash` | Herhangi bir OpenRouter model adı |
 | `RUN_AT` | `03:00` | Gece işinin saati (Europe/Istanbul) |
 | `REPORT_AT` | `09:00` | Telegram sabah raporunun saati |

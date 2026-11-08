@@ -51,7 +51,8 @@ YouTube API ──> collector ──> SQLite <── analysis ──> OpenRouter
 
 ## Setup
 
-You need a Linux server with Docker and Docker Compose, a domain (or subdomain) and these keys:
+You need a Linux server with ports 80 and 443 free, a domain (or subdomain) pointing to it, and
+three values: a YouTube API key, your channel id and an OpenRouter API key.
 
 | Key | Where to get it |
 |---|---|
@@ -60,15 +61,23 @@ You need a Linux server with Docker and Docker Compose, a domain (or subdomain) 
 | `OPENROUTER_API_KEY` | https://openrouter.ai/keys |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Optional. Create a bot with @BotFather; your chat id from @userinfobot |
 
-```sh
-git clone <this repo> mutfak && cd mutfak
-cp .env.example .env && chmod 600 .env
-# fill in .env (each value is explained in Turkish), then:
-docker compose up -d --build
-```
+1. Point an A record for your domain to the server's IP address.
+2. Install Docker if it isn't there yet (Ubuntu/Debian):
+   ```sh
+   apt install -y docker.io docker-compose-v2
+   ```
+3. Get the code and fill in the settings (each value is explained in the file, in Turkish):
+   ```sh
+   git clone https://github.com/erhanmeydan/mutfak.git && cd mutfak
+   cp .env.example .env && chmod 600 .env && nano .env
+   ```
+4. Start it:
+   ```sh
+   docker compose up -d --build
+   ```
 
-Point an A record for your domain to the server first. Caddy gets the HTTPS certificate by itself.
-Every service restarts automatically, also after a reboot.
+Open `https://your-domain/mutfak` for the board and `https://your-domain/panel` for the panel. Caddy
+gets the HTTPS certificate by itself. Every service restarts automatically, also after a reboot.
 
 The first run fetches the last 30 days of comments. After that, only new ones are fetched.
 
@@ -86,7 +95,7 @@ docker compose logs -f worker                            # watch the nightly job
 |---|---|---|
 | `DOMAIN` | | Domain for the board and the panel |
 | `PANEL_PASSWORD` | | Password for `/panel` |
-| `SECRET_KEY` | | Long random value for cookies and IP hashing |
+| `SECRET_KEY` | generated | Secret for cookies and IP hashing. Leave empty to have one generated and kept on the data volume |
 | `OPENROUTER_MODEL` | `deepseek/deepseek-v4.1-flash` | Any OpenRouter model id |
 | `RUN_AT` | `03:00` | Nightly job time (Europe/Istanbul) |
 | `REPORT_AT` | `09:00` | Telegram morning report time |
