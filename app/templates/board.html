@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Sıradaki videoyu siz seçin | Mutfak{% endblock %}
+{% block meta %}
+  <meta name="description" content="Konu önermek için videoların altına yorum yazın, burada oylayın.">
+  <meta property="og:title" content="Sıradaki videoyu siz seçin">
+  <meta property="og:description" content="Konu önermek için videoların altına yorum yazın, burada oylayın.">
+{% endblock %}
+{% block body_class %}page-board{% endblock %}
+{% block body %}
+<header class="topbar">
+  <a class="wordmark" href="{{ url_for('board') }}">mutfak</a>
+  <button class="theme-toggle" type="button" aria-label="Açık veya koyu temaya geç">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
+  </button>
+</header>
+
+<main class="board">
+  <section class="intro">
+    <h1>Sıradaki videoyu siz seçin.</h1>
+    <p>Konu önermek için videoların altına yorum yazın, burada oylayın.</p>
+  </section>
+
+  {% if topics %}
+  <ol class="rail">
+    {% for t in topics %}
+    {% set voted = t.id in mine %}
+    <li class="slot" id="siparis-{{ t.id }}">
+      <article class="ticket{% if voted %} is-voted{% endif %}">
+        <header class="ticket-head">
+          <span>sipariş #{{ t.id }}</span>
+          <span class="count" data-count>{{ t.votes }} oy</span>
+        </header>
+        <h2>{{ t.title }}</h2>
+        {% if t.summary %}<p class="ticket-note">{{ t.summary }}</p>{% endif %}
+        <form class="vote-form" method="post" action="{{ url_for('vote', topic_id=t.id) }}">
+          <button class="vote" type="submit" aria-pressed="{{ 'true' if voted else 'false' }}">
+            <span class="when-off">Ben de istiyorum</span>
+            <span class="when-on">Oy verdin, geri almak için dokun</span>
+          </button>
+        </form>
+        <span class="stamp" aria-hidden="true">alındı</span>
+      </article>
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}
+  <section class="empty">
+    <h2>Mutfakta henüz sipariş yok.</h2>
+    <p>Videoların altına konu önerisi yazın. Seçilen öneriler burada oylamaya açılır.</p>
+  </section>
+  {% endif %}
+
+  <p class="toast" role="status" aria-live="polite" hidden></p>
+</main>
+
+<footer class="footnote">
+  <p>Bu panoda yalnızca ziyaretçi oyları sayılır. Yorumlar ve yorumcu adları burada gösterilmez.</p>
+  {% if channel_url %}<p><a href="{{ channel_url }}">YouTube kanalına git</a></p>{% endif %}
+</footer>
+{% endblock %}

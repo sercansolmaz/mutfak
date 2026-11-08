@@ -124,3 +124,18 @@ def purge_old(conn):
         (cutoff,),
     )
     return cur.rowcount
+
+
+def set_topic_status(conn, topic_id, status, title=None, summary=None):
+    """Approve or reject a topic (panel and Telegram). Only requests can be approved,
+    since only requests appear on the public board. Returns True if a row changed."""
+    if status not in ("approved", "rejected"):
+        return False
+    sets, args = ["status = ?", "updated_at = ?"], [status, now_iso()]
+    if title:
+        sets.append("title = ?"); args.append(" ".join(title.split())[:80])
+    if summary is not None:
+        sets.append("summary = ?"); args.append(summary.strip()[:240])
+    where = "id = ?" + (" AND kind = 'request'" if status == "approved" else "")
+    cur = conn.execute(f"UPDATE topics SET {', '.join(sets)} WHERE {where}", (*args, topic_id))
+    return cur.rowcount == 1

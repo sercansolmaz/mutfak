@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Mutfak paneli{% endblock %}
+{% block meta %}<meta name="robots" content="noindex">{% endblock %}
+{% block body_class %}page-panel{% endblock %}
+{% block body %}
+<header class="topbar">
+  <a class="wordmark" href="{{ url_for('panel') }}">mutfak <span>paneli</span></a>
+  <div class="topbar-actions">
+    <a class="quiet-link" href="{{ url_for('board') }}">Panoyu aç</a>
+    <button class="theme-toggle" type="button" aria-label="Açık veya koyu temaya geç">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
+    </button>
+    <form method="post" action="{{ url_for('logout') }}">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <button class="quiet-link" type="submit">Çıkış</button>
+    </form>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Panel bölümleri">
+  <a href="{{ url_for('panel') }}" {% if section == 'queue' %}aria-current="page"{% endif %}>
+    Kuyruk{% if counts.queue %} <b>{{ counts.queue }}</b>{% endif %}</a>
+  <a href="{{ url_for('insights') }}" {% if section == 'insights' %}aria-current="page"{% endif %}>Öngörüler</a>
+  <a href="{{ url_for('questions') }}" {% if section == 'questions' %}aria-current="page"{% endif %}>
+    Sorular{% if counts.questions %} <b>{{ counts.questions }}</b>{% endif %}</a>
+  <a href="{{ url_for('runs') }}" {% if section == 'runs' %}aria-current="page"{% endif %}>Rapor</a>
+</nav>
+
+<main class="panel">
+
+{% if section == 'queue' %}
+  <section>
+    <h1>Onay kuyruğu</h1>
+    <p class="lede">Yorumlardan çıkan konu talepleri. Onayladıklarınız panoda oylamaya açılır; başlığı ve açıklamayı onaylamadan önce düzenleyebilirsiniz.</p>
+    {% for t in pending %}
+    <form class="ticket flat" method="post" action="{{ url_for('topic_status', topic_id=t.id) }}">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="back" value="queue">
+      <header class="ticket-head"><span>sipariş #{{ t.id }}</span><span>{{ t.mentions }} yorumda geçti</span></header>
+      <label class="sr-only" for="title-{{ t.id }}">Başlık</label>
+      <textarea class="edit-title" id="title-{{ t.id }}" name="title" maxlength="80" rows="2" required>{{ t.title }}</textarea>
+      <label class="sr-only" for="summary-{{ t.id }}">Açıklama</label>
+      <textarea class="edit-summary" id="summary-{{ t.id }}" name="summary" maxlength="240" rows="3">{{ t.summary }}</textarea>
+      <div class="actions">
+        <button class="button primary" name="status" value="approved">Onayla</button>
+        <button class="button" name="status" value="rejected">Reddet</button>
+      </div>
+    </form>
+    {% else %}
+    <p class="empty-line">Onay bekleyen konu yok. Yeni konular her gece 03:00'teki analizden sonra burada görünür.</p>
+    {% endfor %}
+  </section>
+
+  <section>
+    <h2>Panoda olanlar</h2>
+    {% for t in approved %}
+    <form class="row" method="post" action="{{ url_for('topic_status', topic_id=t.id) }}">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="back" value="queue">
+      <span class="row-main"><strong>{{ t.title }}</strong><small>{{ t.votes }} oy, {{ t.mentions }} yorum</small></span>
+      <button class="button small" name="status" value="rejected">Panodan kaldır</button>
+    </form>
+    {% else %}
+    <p class="empty-line">Panoda henüz konu yok.</p>
+    {% endfor %}
+  </section>
+
+{% elif section == 'insights' %}
+  {% for title, items, empty in [
+      ("Tekrar eden eleştiriler", criticism, "Tekrar eden bir eleştiri yok."),
+      ("Haberler ve ürünler", news, "İzleyicilerin bahsettiği yeni bir haber veya ürün yok.")] %}
+  <section>
+    <h1>{{ title }}</h1>
+    {% for t in items %}
+    <form class="ticket flat" method="post" action="{{ url_for('topic_status', topic_id=t.id) }}">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="back" value="insights">
+      <header class="ticket-head"><span>{{ t.mentions }} yorumda geçti</span><span>{{ t.updated_at | local_date }}</span></header>
+      <h3>{{ t.title }}</h3>
+      {% if t.summary %}<p class="ticket-note">{{ t.summary }}</p>{% endif %}
+      <div class="actions"><button class="button small" name="status" value="rejected">Gizle</button></div>
+    </form>
+    {% else %}
+    <p class="empty-line">{{ empty }}</p>
+    {% endfor %}
+  </section>
+  {% endfor %}
+
+{% elif section == 'questions' %}
+  <section>
+    <h1>Cevap bekleyen sorular</h1>
+    <p class="lede">Size doğrudan sorulmuş ve henüz cevaplamadığınız sorular. Yorum metinleri 30 gün sonra silinir.</p>
+    {% for q in questions %}
+    <form class="ticket flat" method="post" action="{{ url_for('question_done', comment_id=q.comment_id) }}">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <header class="ticket-head"><span>{{ q.published_at | local_date }}</span></header>
+      <h3>{{ q.summary }}</h3>
+      {% if q.text %}<blockquote>{{ q.text }}</blockquote>{% endif %}
+      <div class="actions">
+        <a class="button primary" href="https://www.youtube.com/watch?v={{ q.video_id }}&amp;lc={{ q.comment_id }}" target="_blank" rel="noopener">YouTube'da cevapla</a>
+        <button class="button" type="submit">Listeden çıkar</button>
+      </div>
+    </form>
+    {% else %}
+    <p class="empty-line">Cevap bekleyen soru yok.</p>
+    {% endfor %}
+  </section>
+
+{% elif section == 'runs' %}
+  <section>
+    <h1>Gece raporu</h1>
+    <p class="lede">Son 14 çalışma. Toplama her gece 03:00'te başlar.</p>
+    <ul class="runs">
+      {% for r in runs %}
+      <li class="run {{ r.status }}">
+        <strong>{{ r.started_at | local_datetime }}</strong>
+        <span>{{ r.fetched }} yeni yorum</span>
+        <span>{{ r.analyzed }} yorum analiz edildi</span>
+        <span>{{ r.new_topics }} yeni konu</span>
+        <span>{{ r.quota_units }} kota birimi</span>
+        <span>{{ r.purged }} yorum temizlendi</span>
+        {% if r.message %}<p class="form-error">{{ r.message }}</p>{% endif %}
+      </li>
+      {% else %}
+      <li class="empty-line">Henüz çalışma yok.</li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endif %}
+
+</main>
+{% endblock %}
