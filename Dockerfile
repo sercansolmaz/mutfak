@@ -17,4 +17,7 @@ RUN useradd --system --uid 10001 mutfak \
 USER mutfak
 
 EXPOSE 8000
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--access-logfile", "-", "app.web:app"]
+
+# Single-container mode (Coolify deploys one app): run the nightly/Telegram
+# worker in the background (with restart-on-crash loop) and gunicorn in front.
+CMD ["sh", "-c", "while true; do python -m app.worker; echo '[start] worker exited; restarting in 5s' >&2; sleep 5; done & exec gunicorn --bind 0.0.0.0:8000 --workers 2 --access-logfile - app.web:app"]
