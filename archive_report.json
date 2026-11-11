@@ -1,0 +1,117 @@
+{
+ "ozet": {
+  "yorum": 20991,
+  "video": 247,
+  "soru": 2348,
+  "aralik": "2017–2026"
+ },
+ "temalar": [
+  {
+   "ad": "Ekipman seçimi ve karşılaştırma",
+   "yaklasik_soru": 42,
+   "icgoru": "Kullanıcılar en çok bütçe ve kullanım amacına göre mikrofon, ses kartı, monitör ve kayıt cihazı seçiminde karşılaştırma ve net öneri bekliyor."
+  },
+  {
+   "ad": "Mikrofon seçimi, karşılaştırma ve teknik özellikler",
+   "yaklasik_soru": 32,
+   "icgoru": "Kullanıcılar model seçimi, fiyat-performans, USB/XLR farkı, yaka mikrofonu ve dip ses gibi konularda yoğun karşılaştırma ve net öneri bekliyor."
+  },
+  {
+   "ad": "Ses kartı seçimi, kullanımı ve uyumluluk",
+   "yaklasik_soru": 30,
+   "icgoru": "Bütçe, giriş sayısı, Windows/macOS uyumluluğu, kulaklık empedansı ve dip ses gibi pratik seçim kriterleri öne çıkıyor."
+  },
+  {
+   "ad": "YouTube kanal büyütme, abone, para kazanma ve telif",
+   "yaklasik_soru": 28,
+   "icgoru": "Kanal büyütme ve telif konuları yeni üreticilerin en çok endişe ettiği alan; somut strateji ve kural bilgisi isteniyor."
+  },
+  {
+   "ad": "YouTube kanal büyütme, abone, izlenme ve para kazanma",
+   "yaklasik_soru": 28,
+   "icgoru": "Abone artışı, bot kullanımı, izlenme düşüklüğü, 1000 abone 4000 saat kuralı ve para kazanma şartları en sık sorulan büyüme odaklı başlıklar."
+  },
+  {
+   "ad": "Bağlantı, kurulum ve MIDI/telefon/kamera entegrasyonu",
+   "yaklasik_soru": 24,
+   "icgoru": "Kullanıcılar cihazları doğru porta bağlama, MIDI dönüştürücü, telefon-kamera bağlantısı ve canlı yayın kurulumunda adım adım rehber arıyor."
+  },
+  {
+   "ad": "Kayıt tekniği, bağlantı, ayar ve sinyal zinciri",
+   "yaklasik_soru": 22,
+   "icgoru": "Teknik sorular genelde bağlantı, gain, dip ses, gecikme ve doğru kayıt zinciri etrafında yoğunlaşıyor."
+  },
+  {
+   "ad": "YouTube telif hakkı, Content ID ve lisanslama",
+   "yaklasik_soru": 20,
+   "icgoru": "Telif, hak talebi, Content ID itirazı, cover ve film fragmanı kullanımı kanalın en hassas ve en çok yanıt bekleyen konularından biri."
+  },
+  {
+   "ad": "Zoom H6/H8 ve taşınabilir kayıt cihazları",
+   "yaklasik_soru": 18,
+   "icgoru": "Zoom cihazları hem ses kartı hem kayıt cihazı hem mikrofon olarak kullanılmak isteniyor; kutu içeriği, yazılım lisansı ve telefon bağlantısı sık soruluyor."
+  },
+  {
+   "ad": "DAW, kayıt, mix ve prodüksiyon teknikleri",
+   "yaklasik_soru": 16,
+   "icgoru": "Logic, FL Studio, Ableton, Cubase ve Reaper gibi DAW lar üzerinden kayıt, metronom, mix ve efekt kullanımına dair uygulamalı içerik talebi var."
+  },
+  {
+   "ad": "İnceleme, anket ve içerik geri bildirimi",
+   "yaklasik_soru": 15,
+   "icgoru": "İzleyici topluluk hissi istiyor; anketler ve yorum çağrıları içerik yönünü belirlemede etkili."
+  },
+  {
+   "ad": "Müzik eğitimi, kariyer ve başlangıç tavsiyeleri",
+   "yaklasik_soru": 14,
+   "icgoru": "Yaş, enstrüman seçimi, müzik teknolojileri bölümü ve düzenli çalışma yöntemi konularında motivasyon ve yol haritası isteniyor."
+  },
+  {
+   "ad": "DAW, yazılım ve video edit",
+   "yaklasik_soru": 12,
+   "icgoru": "Yazılım tarafında öğrenme süresi, alternatif programlar ve ders serilerinin devamı merak ediliyor."
+  },
+  {
+   "ad": "Kamera, video çekim ve ekipman önerileri",
+   "yaklasik_soru": 12,
+   "icgoru": "Kamera seçimi, telefonla çekim, dosya boyutu ve video düzenleme programı karşılaştırmaları öne çıkıyor."
+  },
+  {
+   "ad": "Podcast ve canlı yayın",
+   "yaklasik_soru": 10,
+   "icgoru": "Podcast ve yayıncılıkta pratik kurulum, çoklu kişi kullanımı ve yayın kalitesi öne çıkıyor."
+  },
+  {
+   "ad": "Müzik eğitimi, kariyer ve enstrüman öğrenme",
+   "yaklasik_soru": 10,
+   "icgoru": "Yaş, temel eksikliği ve kariyer yönelimi konularında cesaret verici ve yol gösterici cevaplar bekleniyor."
+  },
+  {
+   "ad": "Diğer kişisel ve teknik destek",
+   "yaklasik_soru": 8,
+   "icgoru": "Kişisel erişim, ekipman detayı ve videoda kullanılan ürünlerin marka modeli sıkça soruluyor."
+  },
+  {
+   "ad": "Ses algısı, ses hijyeni ve akustik",
+   "yaklasik_soru": 7,
+   "icgoru": "Sesin algılanması, sağlığı ve akustik ortamla ilgili merak; hem teknik hem deneyimsel paylaşım istiyor."
+  },
+  {
+   "ad": "Satın alma, fiyat ve ikinci el",
+   "yaklasik_soru": 6,
+   "icgoru": "Fiyat, garanti, satıcı güveni ve ikinci el riski satın alma kararında belirleyici sorular arasında."
+  }
+ ],
+ "top10": [
+  "Hangi mikrofonu almalıyım?",
+  "Hangi ses kartını almalıyım?",
+  "X ile Y arasında hangisini seçmeliyim?",
+  "1000 aboneye nasıl ulaşırım?",
+  "Telif hakkı yersem ne olur?",
+  "Evde kayıt için hangi ekipman gerekli?",
+  "Podcast için hangi mikrofon ve ses kartı uygun?",
+  "MIDI klavyede gecikme nasıl çözülür?",
+  "Ses kartı gerçekten gerekli mi?",
+  "Final Cut Pro veya Logic Pro ne kadar sürede öğrenilir?"
+ ]
+}
