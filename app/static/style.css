@@ -344,3 +344,22 @@ blockquote {
   .just-voted .stamp { animation: none; }
   .vote { transition: none; }
 }
+
+/* ── archive page ─────────────────────────────────────── */
+.archive-stats {
+  display: flex; gap: 10px; flex-wrap: wrap; margin: 1.2rem 0 1.8rem;
+}
+.archive-stats .stat {
+  background: var(--tile); border: 1px solid var(--paper-rule); border-radius: 10px;
+  padding: 10px 16px; min-width: 110px;
+}
+.archive-stats .stat b { display: block; font-size: 1.5rem; letter-spacing: -0.5px; }
+.archive-stats .stat span { font-size: 0.78rem; color: var(--ink-soft, var(--ink)); opacity: 0.7; }
+.theme-card {
+  background: var(--tile); border: 1px solid var(--paper-rule); border-radius: 12px;
+  padding: 16px 20px; margin-bottom: 12px;
+}
+.theme-card header { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.theme-card h2 { font-size: 1.02rem; margin: 0; }
+.theme-card .theme-n { color: var(--ink-soft, var(--ink)); opacity: 0.75; white-space: nowrap; font-size: 0.82rem; }
+.theme-card .theme-ins { margin-top: 6px; font-size: 0.9rem; opacity: 0.85; }

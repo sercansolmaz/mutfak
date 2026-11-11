@@ -208,6 +208,25 @@ def vote(topic_id):
     return resp
 
 
+@app.get("/mutfak/arsiv")
+def archive():
+    """Public historical analysis: themes and stats from the full-channel harvest.
+
+    Aggregate data only: theme titles, counts and short LLM insights.
+    No comment text and no author names are stored or shown here.
+    """
+    import json
+    path = os.path.join(os.path.dirname(db.DB_PATH), "archive_report.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            report = json.load(f)
+    except (OSError, ValueError):
+        report = None
+    if not report or not report.get("temalar"):
+        return redirect(url_for("board"))
+    return render_template("archive.html", report=report)
+
+
 # ── private panel ──────────────────────────────────────
 
 @app.route("/giris", methods=["GET", "POST"])

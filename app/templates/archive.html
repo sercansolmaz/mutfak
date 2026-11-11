@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Arşiv — 9 yıllık yorum analizi | Mutfak{% endblock %}
+{% block meta %}
+  <meta name="description" content="Kanalın tüm geçmişinden: {{ report.ozet.yorum }} yorum, {{ report.temalar|length }} büyük tema. İzleyicilerin yıllar içinde en çok istediği konular.">
+  <meta property="og:title" content="Arşiv: 9 yıllık yorum analizi">
+{% endblock %}
+{% block body_class %}page-board{% endblock %}
+{% block body %}
+<header class="topbar">
+  <a class="wordmark" href="{{ url_for('board') }}">mutfak</a>
+  <button class="theme-toggle" type="button" aria-label="Açık veya koyu temaya geç">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
+  </button>
+</header>
+
+<main class="board">
+  <section class="intro">
+    <h1>Arşiv: 9 yıllık yorum analizi.</h1>
+    <p>Kanalın {{ report.ozet.aralik }} arasındaki tüm yorumları tek geçişte analiz ettik.
+       Kimse alıntılanmadı; yalnızca toplu temalar.</p>
+  </section>
+
+  <section class="archive-stats">
+    <div class="stat"><b>{{ report.ozet.yorum|default(0) }}</b><span>yorum</span></div>
+    <div class="stat"><b>{{ report.ozet.video|default(0) }}</b><span>video</span></div>
+    <div class="stat"><b>{{ report.ozet.soru|default(0) }}</b><span>soru</span></div>
+    <div class="stat"><b>{{ report.temalar|length }}</b><span>tema</span></div>
+  </section>
+
+  {% for t in report.temalar %}
+  <article class="theme-card">
+    <header>
+      <h2>{{ t.ad }}</h2>
+      <span class="theme-n">≈{{ t.yaklasik_soru }} soru</span>
+    </header>
+    {% if t.icgoru %}<p class="theme-ins">{{ t.icgoru }}</p>{% endif %}
+  </article>
+  {% endfor %}
+
+  <section class="intro" style="margin-top:2rem">
+    <h2 style="font-size:1.3rem">Sırada ne var?</h2>
+    <p>Bu temalardan seçtiklerimiz pano onayına düşüyor. Siz de video önermek için
+       videoların altına yorum yazın.</p>
+  </section>
+  <p style="margin-top:2rem"><a class="vote" href="{{ url_for('board') }}">Panoya dön →</a></p>
+</main>
+{% endblock %}
